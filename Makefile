@@ -1,67 +1,43 @@
-up-shortnr:
-	docker-compose up -d --force-recreate shortnr
+up-backend:
+	docker-compose up -d --force-recreate backend
 
-up-urlstore:
-	docker-compose up -d --force-recreate urlstore
+up-frontend:
+	docker-compose up -d --force-recreate frontend
 
-up-xlink:
-	docker-compose up -d --force-recreate xlink
-
-up-mongo:
-	docker-compose up -d --force-recreate mongo
-
-up: up-shortnr up-urlstore up-xlink up-mongo
+up: up-backend up-frontend
 
 logs:
 	docker-compose logs -f
 
-install-shortnr:
-	docker-compose run --rm shortnr "npm install"
+install-backend:
+	docker-compose run --rm backend "npm install"
 
-install-urlstore:
-	docker-compose run --rm urlstore "npm install"
+install-frontend:
+	docker-compose run --rm frontend "npm install"
 
-install-xlink:
-	docker-compose run --rm xlink "npm install"
+install: install-backend install-frontend
 
-install: install-shortnr install-urlstore install-xlink
+into-backend:
+	docker-compose exec backend bash
 
-into-shortnr:
-	docker-compose exec shortnr bash
+into-frontend:
+	docker-compose exec forntend bash
 
-into-urlstore:
-	docker-compose exec urlstore bash
+lint-backend:
+	docker-compose run --rm backend "npm run lint"
 
-into-xlink:
-	docker-compose exec xlink bash
+lint-frontend:
+	docker-compose run --rm frontend "npm run lint"
 
-into-mongo:
-	docker-compose exec mongo bash
+lint: lint-backend lint-frontend
 
-into-mongo-db:
-	docker-compose exec mongo mongo urlstore
+test-backend:
+	docker-compose run --rm backend "npm test -- --verbose"
 
-lint-shortnr:
-	docker-compose run --rm shortnr "npm run lint"
+test-frontend:
+	docker-compose run --rm frontend "npm tets -- --verbose"
 
-lint-urlstore:
-	docker-compose run --rm urlstore "npm run lint"
-
-lint-xlink:
-	docker-compose run --rm xlink "npm run lint"
-
-lint: lint-shortnr lint-urlstore lint-xlink
-
-test-shortnr:
-	docker-compose run --rm shortnr "npm run test:unit -- --verbose"
-
-test-urlstore:
-	docker-compose run --rm urlstore "npm test -- --verbose"
-
-test-xlink:
-	docker-compose run --rm xlink "npm test -- --verbose"
-
-test: test-shortnr test-urlstore test-xlink
+test: test-backend test-forntend
 
 unrootify:
 	sudo chown -R $$(id -u):$$(id -g) .

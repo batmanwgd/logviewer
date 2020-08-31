@@ -1,53 +1,34 @@
 import { Response, Request } from 'express';
-import { fetchUrls, insertUrl } from './db';
-import { generateHash } from './code';
-import { config } from './config';
-import { isValidUrl } from './validate';
+import * as fs from 'fs';
+import * as util from 'util';
+import { parseLines } from './parse';
 
-interface UrlEntry {
-  code: string;
-  url: string;
-}
+export const handleGet = async (req: Request<any>, res: Response<any>) => {
+  const open = util.promisify(fs.open);
+  const read = util.promisify(fs.read);
 
-const recordToResponse = (record: UrlEntry) => ({
-  ...record,
-  code: config.XLINK_URL + record.code,
-});
+  const fd = await open('./data/example.log', 'r');
+  const buffer = Buffer.alloc(300); // Buffer.alloc(16384);
 
-export const handleUrlListAction = async (res: Response<any>) => {
-  const responseBody = (await fetchUrls()).map(recordToResponse);
-  res.send(responseBody);
-};
+  let lineContent = '';
+  let position = parseInt(req.query.position as string) || 0;
+  for (;;) {
+    const readResult = await read(fd, buffer, 0, buffer.length, position);
 
-export const handleCreateUrlAction = async (
-  req: Request<any>,
-  res: Response<any>,
-) => {
-  if (!isValidUrl(req.body.url)) {
-    res.status(400).send({
-      error: 'URL is not valid',
-    });
-    return;
-  }
-
-  const newEntry = {
-    code: generateHash(),
-    url: req.body.url,
-  };
-
-  try {
-    await insertUrl(newEntry);
-  } catch (e) {
-    if (e.code === 11000) {
-      res.status(503).send({
-        error: 'Wait until different code is generated and try again later',
-      });
-      return;
+    const bufferContent = readResult.buffer.toString();
+    const lastN = bufferContent.lastIndexOf('\n');
+    if (lastN === -1) {
+      lineContent = lineContent + bufferContent;
+      position = position + bufferContent.length;
+      continue;
     }
-    throw e;
+    lineContent = lineContent + bufferContent.slice(0, lastN);
+    position = position + lastN + 1;
+
+    res.json({
+      nextPosition: position,
+      lines: parseLines(lineContent),
+    });
+    break;
   }
-
-  const newEntryResponse = recordToResponse(newEntry);
-
-  res.status(201).send(newEntryResponse);
 };

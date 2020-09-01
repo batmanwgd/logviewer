@@ -11,7 +11,8 @@ export const handleGet = async (req: Request<any>, res: Response<any>) => {
   const buffer = Buffer.alloc(300); // Buffer.alloc(16384);
 
   let lineContent = '';
-  let position = parseInt(req.query.position as string) || 0;
+  const start = parseInt(req.query.position as string) || 0;
+  let position = start;
   for (;;) {
     const readResult = await read(fd, buffer, 0, buffer.length, position);
 
@@ -23,10 +24,11 @@ export const handleGet = async (req: Request<any>, res: Response<any>) => {
       continue;
     }
     lineContent = lineContent + bufferContent.slice(0, lastN);
-    position = position + lastN + 1;
+    position = position + lastN;
 
     res.json({
-      nextPosition: position,
+      start,
+      end: position,
       lines: parseLines(lineContent),
     });
     break;

@@ -6,11 +6,12 @@ services:
       - "./frontend:/mnt/frontend"
     working_dir: "/mnt/frontend"
     environment:
+      PORT: 8080
       REACT_APP_BACKEND_URL: ${BACKEND_URL:-http://localhost:9090/}
     entrypoint: "/bin/bash -c"
     command:
       - |
-        npm start || (\
+        CI=true npm start || (\
           echo "⛔ \`npm start\` failed, but the container is running..." && \
           tail -f /dev/null \
         )

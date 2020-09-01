@@ -7,7 +7,7 @@ app.use(cors());
 app.use(express.json());
 
 app.get('/', async (req, res) => {
-  console.log('🗎 GET');
+  console.log('🗎 GET', req.url.toString());
   try {
     handleGet(req, res);
   } catch (e) {

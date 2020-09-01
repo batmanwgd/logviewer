@@ -21,7 +21,7 @@ into-backend:
 	docker-compose exec backend bash
 
 into-frontend:
-	docker-compose exec forntend bash
+	docker-compose exec frontend bash
 
 lint-backend:
 	docker-compose run --rm backend "npm run lint"

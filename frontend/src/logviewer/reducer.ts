@@ -30,6 +30,19 @@ export const bookReducer = (book: Book, page: CountedPage): Book => {
     return result;
   }
 
-  console.error('cannot replace page yet, page: ', page);
-  return book;
+  const pages = [...book.pages];
+  pages[pageIndex] = page;
+
+  const result = { ...book, pages };
+
+  while (
+    result.pages.reduce<number>((acc: number, page: CountedPage) => acc + page.lines.length, 0) > config.MAX_LINES_SHOWN
+  ) {
+    const searchIn = result.pages.slice().reverse();
+    const evictCandidate = searchIn.find((page: CountedPage) => page.lines.length > 0) as CountedPage;
+    const evictIndex = result.pages.indexOf(evictCandidate);
+    result.pages[evictIndex].lines = [];
+  }
+
+  return result;
 };

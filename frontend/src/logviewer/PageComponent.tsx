@@ -7,17 +7,23 @@ interface PageComponentProps {
 
 export const PageComponent: React.FC<PageComponentProps> = (props: PageComponentProps) => {
   return (
-    <div className="page">
-      {props.page.start}
+    <>
+      <div className="line header">
+        {props.page.start}
+      </div>
       {props.page.lines.map((line: Line) => {
         return (
           <div className="line">
-            {line.date}
-            {line.severity}
-            {line.message}
+            <div className="details">
+              <div className="date">{line.date}</div>
+              <div className="severity">{line.severity}</div>
+            </div>
+            <div className="message">
+              {line.message}
+            </div>
           </div>
         );
       })}
-    </div>
+    </>
   );
 }

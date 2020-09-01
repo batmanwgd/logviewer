@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer } from 'react';
 import styled from 'styled-components';
-import { CountedPage } from './page';
+import { CountedPage, Page } from './page';
 import { bookReducer, Book } from './reducer';
 import { PageComponent } from './PageComponent';
 import { fetchLogPage } from './http';
@@ -12,9 +12,11 @@ const Wrapper = styled.div`
     width: 720px;
     margin: 0px auto;
   }
-  .header {
+  & >.header {
     width: 100%;
     .stats {
+      box-sizing: border-box;
+
       width: 720px;
       margin: 0px auto;
       border: 1px solid green;
@@ -29,18 +31,35 @@ const Wrapper = styled.div`
   }
 
   .content {
-
     .table {
       padding-top: 50px;
       background: blue;
 
-      .page {
-        background: white;
-        .line {
-          &:first-child {
-            border: 0;
+      background: white;
+      .line {
+        font-family: "Courier New", Courier, monospace;
+        font-size: 0.75em;
+        text-align: left;
+        &:first-child {
+          border: 0;
+        }
+        border-top: 1px solid red;
+        display: flex;
+        .details {
+          float: 0 1;
+          display: flex;
+          .date {
+            float: 1;
           }
-          border-top: 1px solid red;
+          .severity {
+            float: 0 1;
+          }
+        }
+        .message {
+          float: 1;
+        }
+        @media (max-width: ${breakpointSmall}) {
+          flex-direction: column;
         }
       }
     }  
@@ -68,16 +87,16 @@ export const LogViewer: React.FC = () => {
 
   useEffect(() => {
     fetchLogPage(0)
-      .then((page: CountedPage) => {
-        addPage(page);
+      .then((page: Page) => {
+        addPage({ ...page, lineCount: page.lines.length });
       });
   });
 
   const handleLoadMore = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     const lastEnd = book.pages[book.pages.length - 1].end;
     fetchLogPage(lastEnd + 1)
-      .then((page: CountedPage) => {
-        addPage(page);
+      .then((page: Page) => {
+        addPage({ ...page, lineCount: page.lines.length });
       });
   }
   

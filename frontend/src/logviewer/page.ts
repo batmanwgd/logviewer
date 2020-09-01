@@ -16,5 +16,4 @@ export interface Stats {
 
 export interface CountedPage extends Page {
   lineCount: number;
-  stats: Stats;
 }

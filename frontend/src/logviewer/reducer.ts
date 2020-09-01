@@ -6,7 +6,7 @@ export interface Book {
   stats: Stats;
 }
 
-export const bookReducer = (book: Book, page: CountedPage): Book => {
+const addPageToBook = (book: Book, page: CountedPage): Book => {
   const pageIndex = book.pages.findIndex((p: CountedPage) => p.start === page.start);
   if (pageIndex === -1) {
     const pages = [...book.pages, page];
@@ -17,32 +17,32 @@ export const bookReducer = (book: Book, page: CountedPage): Book => {
       newStats[key] = (newStats[key] | 0) + 1;
       return newStats;
     }, book.stats);
-    const result = { ...book, pages, stats };
 
-    while (
-      result.pages.reduce<number>((acc: number, page: CountedPage) => acc + page.lines.length, 0) >
-      config.MAX_LINES_SHOWN
-    ) {
-      const evictIndex = result.pages.findIndex((page: CountedPage) => page.lines.length > 0);
-      result.pages[evictIndex].lines = [];
-    }
-
-    return result;
+    return { ...book, pages, stats };
   }
 
   const pages = [...book.pages];
   pages[pageIndex] = page;
 
-  const result = { ...book, pages };
+  return { ...book, pages };
+};
 
+const evictLinesAboveMax = (book: Book, page: CountedPage): Book => {
+  const addedIndex = book.pages.indexOf(page);
+  const middleIndex = Math.floor(book.pages.length / 2);
   while (
-    result.pages.reduce<number>((acc: number, page: CountedPage) => acc + page.lines.length, 0) > config.MAX_LINES_SHOWN
+    book.pages.reduce<number>((acc: number, page: CountedPage) => acc + page.lines.length, 0) > config.MAX_LINES_SHOWN
   ) {
-    const searchIn = result.pages.slice().reverse();
+    const searchIn = addedIndex > middleIndex ? book.pages : book.pages.slice().reverse();
     const evictCandidate = searchIn.find((page: CountedPage) => page.lines.length > 0) as CountedPage;
-    const evictIndex = result.pages.indexOf(evictCandidate);
-    result.pages[evictIndex].lines = [];
+    const evictIndex = book.pages.indexOf(evictCandidate);
+    book.pages[evictIndex].lines = [];
   }
 
-  return result;
+  return book;
+};
+
+export const bookReducer = (book: Book, page: CountedPage): Book => {
+  const bookWithNewPage = addPageToBook(book, page);
+  return evictLinesAboveMax(bookWithNewPage, page);
 };

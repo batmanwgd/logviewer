@@ -22,11 +22,19 @@ const Wrapper = styled.div`
       max-width: 800px;
 
       margin: 0px auto;
-      // border-bottom: 2px solid black;
       background: #ffffffee;
       box-shadow: 0px 3px 3px #ccc;
 
       height: 100%;
+
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      .severity {
+        padding: 0 3px;
+        background: #92d3f5ff;
+        border-radius: 3px;
+      }
     }
 
     position: fixed;
@@ -61,7 +69,6 @@ const Wrapper = styled.div`
             white-space: nowrap;
           }
           .severity {
-            // text-align: left;
             flex: 0 0;
             padding: 0 3px;
             background: #92d3f5ff;
@@ -75,9 +82,6 @@ const Wrapper = styled.div`
           .details {
             flex: 0 0;
             padding-right: 0;
-            .severity {
-              // padding: 0;
-            }
           }
           flex-direction: column;
         }
@@ -86,10 +90,27 @@ const Wrapper = styled.div`
   }
   .footer {
     background: yellow;
+    display: flex;
+    width: 100%;
+
+    button {
+      display: box;
+      width: 100%;
+      background: #f1b31cff;
+      border: 3px solid #a57939ff;
+      &:hover {
+        background: #fcea2bff;
+      }
+    }
     height: 30pt;
   }
 
   @media (max-width: ${breakpointSmall}) {
+    .header {
+      .stats {
+        font-size: 0.75em;
+      }
+    }
     .footer {
       background: grey;
     }
@@ -119,7 +140,16 @@ export const LogViewer: React.FC = () => {
   return (
     <Wrapper>
       <div className="header">
-        <div className="stats">stats</div>
+        <div className="stats">
+          {Object.keys(book.stats).map((key: string) => {
+            return (
+              <div key={`stat-${key}`}>
+                <div className="severity">{key}</div>
+                {book.stats[key]}
+              </div>
+            );
+          })}
+        </div>
       </div>
       <div className="content">
         <div className="table">

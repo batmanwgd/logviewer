@@ -5,9 +5,9 @@ export interface Line {
 }
 
 export interface Page {
-  start: number,
-  end: number,
-  lines: Line[],
+  start: number;
+  end: number;
+  lines: Line[];
 }
 
 export interface Stats {

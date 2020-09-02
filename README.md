@@ -1,5 +1,10 @@
 # Log viewer
 
+The application should display the content of the log file starting from the beginning, user can navigate until the bottom of the file clicking the "Load more"
+
+The solution could address large files, because it loads log lines grouped in pages. This application will only display certain configured amount of lines. If open pages contain more lines than could be currently displayed, it will hide lines from a page that the most distant from last opened page.
+
+The backend is highly scalable because it can seek until exact position in the file where it needs to read data from. This position is specified in bytes and not in line numbers. Therefore the frontend should keep a trace what is the exact location each page data is to be read from.
 
 ## Setup
 
@@ -30,11 +35,12 @@ To enable this configuration simply run this command before the `make up`:
 
 the same way environment variables could be used to deploy this software
 on production hosts. For example this software has been deployed on:
-[shortnor.herokuapp.com](https://TODO.herokuapp.com).
+[lvfront.herokuapp.com](https://lvfront.herokuapp.com).
 
 ## Backend
 
-Backend 
+Backend can select data starting from certain position in bytes.
+
     curl http://localhost:9090?position=0 --output - | jq
 
 
@@ -43,8 +49,6 @@ Backend
 To run tests on frontend and backend use this command:
 
     make test
-
-Here is an [example of test output](./docs/jest-example.md).
 
 ### Shell into containers
 

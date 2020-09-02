@@ -1,14 +1,22 @@
 import React from 'react';
-import { CountedPage, Line } from './page';
+import { CountedPage, Line, Page } from './page';
+import { useBookContext } from './BookContext';
+import { fetchLogPage } from './http';
 
 interface PageComponentProps {
   page: CountedPage;
 }
 
 export const PageComponent: React.FC<PageComponentProps> = (props: PageComponentProps) => {
+  const { addPage } = useBookContext();
+
   const handleExpand = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     event.preventDefault();
-    alert('hi');
+
+    fetchLogPage(props.page.start).then((page: Page) => {
+      addPage({ ...props.page, lines: page.lines });
+    });
+    addPage(props.page);
   };
 
   const collapsed = props.page.lines.length === 0;

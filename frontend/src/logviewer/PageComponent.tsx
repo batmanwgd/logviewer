@@ -10,7 +10,7 @@ interface PageComponentProps {
 export const PageComponent: React.FC<PageComponentProps> = (props: PageComponentProps) => {
   const { addPage } = useBookContext();
 
-  const handleExpand = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+  const handleExpand = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
     event.preventDefault();
 
     fetchLogPage(props.page.start).then((page: Page) => {
@@ -23,10 +23,8 @@ export const PageComponent: React.FC<PageComponentProps> = (props: PageComponent
   return (
     <>
       {collapsed && (
-        <div className="line header">
-          <a href="#" onClick={handleExpand}>
-            [+] {props.page.lineCount} lines collapsed. Click to expand.
-          </a>
+        <div className="line header" onClick={handleExpand}>
+          [+] {props.page.lineCount} lines collapsed. Click to expand.
         </div>
       )}
       {props.page.lines.map((line: Line, key: number) => {

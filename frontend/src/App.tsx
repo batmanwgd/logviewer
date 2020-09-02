@@ -1,14 +1,14 @@
 import React from 'react';
 import './App.css';
 
-import { LogViewer } from './logviewer/LogViewer';
+import { BookComponent } from './logviewer/BookComponent';
 import { BookProvider } from './logviewer/BookContext';
 
 const App: React.FC = () => {
   return (
     <div className="App">
       <BookProvider>
-        <LogViewer />
+        <BookComponent />
       </BookProvider>
     </div>
   );

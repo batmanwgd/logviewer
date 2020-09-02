@@ -1,7 +1,6 @@
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { CountedPage, Page } from './page';
-import { bookReducer, Book } from './reducer';
 import { PageComponent } from './PageComponent';
 import { fetchLogPage } from './http';
 import { useBookContext } from './BookContext';
@@ -79,6 +78,12 @@ const Wrapper = styled.div`
         .message {
           flex: 1 1;
         }
+        &.header {
+          background: #92d3f5ff;
+          color: #fff;
+          border-top: 1px solid #fff;
+          cursor: pointer;
+        }
         @media (max-width: ${breakpointSmall}) {
           .details {
             flex: 0 0;
@@ -102,6 +107,7 @@ const Wrapper = styled.div`
       &:hover {
         background: #fcea2bff;
       }
+      cursor: pointer;
     }
     height: 30pt;
   }
@@ -118,7 +124,7 @@ const Wrapper = styled.div`
   }
 `;
 
-export const LogViewer: React.FC = () => {
+export const BookComponent: React.FC = () => {
   const { book, addPage } = useBookContext();
 
   useEffect(() => {

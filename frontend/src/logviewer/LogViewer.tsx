@@ -4,6 +4,7 @@ import { CountedPage, Page } from './page';
 import { bookReducer, Book } from './reducer';
 import { PageComponent } from './PageComponent';
 import { fetchLogPage } from './http';
+import { useBookContext } from './BookContext';
 
 const breakpointSmall = '620px';
 const Wrapper = styled.div`
@@ -118,10 +119,7 @@ const Wrapper = styled.div`
 `;
 
 export const LogViewer: React.FC = () => {
-  const [book, addPage] = useReducer<React.Reducer<Book, CountedPage>>(bookReducer, {
-    pages: [],
-    stats: {},
-  });
+  const { book, addPage } = useBookContext();
 
   useEffect(() => {
     fetchLogPage(0).then((page: Page) => {

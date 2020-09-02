@@ -8,7 +8,7 @@ export const handleGet = async (req: Request<any>, res: Response<any>) => {
   const read = util.promisify(fs.read);
 
   const fd = await open('./data/example.log', 'r');
-  const buffer = Buffer.alloc(300); // Buffer.alloc(16384);
+  const buffer = Buffer.alloc(16384);
 
   let lineContent = '';
   const start = parseInt(req.query.position as string) || 0;
